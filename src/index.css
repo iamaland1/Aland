@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
+
+@theme {
+  --font-arabic: "Noto Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-amiri: "Amiri", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-gold: #D4AF37;
+  --color-gold-light: #F4E4BC;
+  --color-gold-dark: #996515;
+  --color-islamic-green: #166B3A;
+}
+
+@layer base {
+  body {
+    @apply font-arabic bg-[#F8F9FA] text-[#1B1B2F] selection:bg-gold/30;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .islamic-card {
+    @apply bg-white rounded-2xl border border-[#E5E7EB] shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .gold-gradient {
+    @apply bg-gradient-to-br from-gold via-[#F4E4BC] to-gold-dark;
+  }
+  
+  .text-gold-gradient {
+    @apply bg-gradient-to-br from-gold to-gold-dark bg-clip-text text-transparent;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 10px;
+}
+
+.font-amiri {
+  font-family: var(--font-amiri);
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
+}
