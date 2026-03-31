@@ -88,11 +88,49 @@ function IslamicNumber({ num, className }: { num: number | string; className?: s
   );
 }
 
+// Logo Component
+const Logo = ({ className, light = false }: { className?: string; light?: boolean }) => (
+  <div className={cn("flex items-center gap-3", className)}>
+    <div className="relative w-10 h-10 flex items-center justify-center">
+      <div className="absolute inset-0 bg-white/10 rounded-xl rotate-6" />
+      <div className="absolute inset-0 bg-gold/20 rounded-xl -rotate-3" />
+      <div className="relative z-10 w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm">
+        <svg viewBox="0 0 100 100" className="w-6 h-6 text-[#166B3A]">
+          {/* Path/Road */}
+          <path 
+            d="M20 80 Q 50 80, 50 50 Q 50 20, 80 20" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="10" 
+            strokeLinecap="round"
+          />
+          {/* Compass/Star */}
+          <path 
+            d="M80 20 L95 15 L85 25 L95 35 L80 30 L65 35 L75 25 L65 15 Z" 
+            fill="#D4AF37"
+          />
+          <circle cx="80" cy="20" r="6" fill="currentColor" />
+        </svg>
+      </div>
+    </div>
+    <div className="flex flex-col leading-none">
+      <span className={cn("text-xl font-black tracking-tight", light ? "text-white" : "text-[#166B3A]")}>Sirat</span>
+      <span className={cn("text-[10px] font-bold opacity-80", light ? "text-gold" : "text-[#B8860B]")}>سیڕات</span>
+    </div>
+  </div>
+);
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [currentSubPage, setCurrentSubPage] = useState<SubPage>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   
   // Home Data
   const [dailyVerse, setDailyVerse] = useState({ t: "", r: "" });
@@ -700,6 +738,62 @@ export default function App() {
     <div className={cn("min-h-screen bg-[#F5F3ED] text-[#1B1B2F] font-arabic transition-colors duration-300", isDarkMode && "dark bg-[#0C1015] text-[#E4DFD4]")} dir="rtl">
       <div className="max-w-[500px] mx-auto h-screen flex flex-col relative overflow-hidden bg-inherit shadow-2xl">
         
+        {/* Splash Screen */}
+        <AnimatePresence>
+          {showSplash && (
+            <motion.div 
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[2000] bg-gradient-to-br from-[#166B3A] to-[#0A3D21] flex items-center justify-center p-6"
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="flex flex-col items-center gap-6"
+              >
+                <div className="relative w-32 h-32 flex items-center justify-center">
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 border-4 border-dashed border-gold/30 rounded-full"
+                  />
+                  <div className="relative z-10 w-24 h-24 flex items-center justify-center bg-white rounded-3xl shadow-2xl rotate-12">
+                    <svg viewBox="0 0 100 100" className="w-16 h-16 text-[#166B3A] -rotate-12">
+                      <path 
+                        d="M20 80 Q 50 80, 50 50 Q 50 20, 80 20" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="10" 
+                        strokeLinecap="round"
+                      />
+                      <path 
+                        d="M80 20 L95 15 L85 25 L95 35 L80 30 L65 35 L75 25 L65 15 Z" 
+                        fill="#D4AF37"
+                      />
+                      <circle cx="80" cy="20" r="6" fill="currentColor" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h1 className="text-4xl font-black text-white tracking-tight mb-1">Sirat</h1>
+                  <p className="text-lg text-gold font-bold">سیڕات</p>
+                </div>
+                <div className="mt-8 flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ scale: [1, 1.5, 1] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                      className="w-2 h-2 bg-gold rounded-full"
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Toast */}
         <AnimatePresence>
           {toast && (
@@ -717,10 +811,7 @@ export default function App() {
         {/* Header */}
         {!currentSubPage && (
           <header className="bg-gradient-to-br from-[#166B3A] to-[#22915A] p-4 flex items-center justify-between shrink-0 z-50 shadow-md">
-            <h1 className="text-white text-lg font-extrabold flex items-center gap-2">
-              <Home className="w-5 h-5" />
-              سیڕات
-            </h1>
+            <Logo light />
             <button 
               onClick={() => handleSubNav("set")}
               className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all active:scale-90"
