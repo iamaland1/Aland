@@ -60,3 +60,10 @@ export interface DhikrCategory {
   name: string;
   icon: string;
 }
+
+export interface AllahName {
+  n: number;
+  a: string;
+  k: string;
+  m: string;
+}

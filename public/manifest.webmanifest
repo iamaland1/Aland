@@ -1,0 +1,21 @@
+{
+  "name": "Sirat Guide (ڕێبەری سیڕات)",
+  "short_name": "Sirat Guide",
+  "description": "ئەپێکی ئیسلامی گشتگیر بۆ کاتەکانی بانگ، قیبلەنما، و زانیارییە دینییەکان",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2A8B8B",
+  "theme_color": "#2A8B8B",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/alandidris/sirat-assets/main/sirat-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/alandidris/sirat-assets/main/sirat-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

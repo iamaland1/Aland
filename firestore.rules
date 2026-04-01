@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (UID)
+    // Fields:
+    //   - uid: string (required) - Firebase Auth UID
+    //   - email: string (required, email format) - User email
+    //   - displayName: string (optional) - User display name
+    //   - photoURL: string (optional, url format) - User photo URL
+    //   - settings: map (optional) - User settings
+    //     - isDarkMode: bool
+    //     - selectedCity: string
+    //     - isAdhanEnabled: bool
+    //     - selectedAdhanId: string
+    //   - progress: map (optional) - User progress
+    //     - dhikrCounters: map
+    //     - favoriteDhikrs: list
+    //     - completedDhikrs: list
+    //   - updatedAt: timestamp (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "alanedris5500@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Domain Validators
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'email']) &&
+             data.uid == request.auth.uid &&
+             isValidEmail(data.email) &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() < 100)) &&
+             (!('photoURL' in data) || isValidUrl(data.photoURL)) &&
+             (!('settings' in data) || data.settings is map) &&
+             (!('progress' in data) || data.progress is map);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      allow delete: if isAdmin();
+    }
+    
+    match /test/connection {
+      allow read: if isAuthenticated();
+    }
+  }
+}
